@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ b.student.name }}{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">STUDENT PROFILE</div><h1>{{ b.student.name }}</h1><p class="muted">{{ b.student.register_number }} · {{ b.student.department }}</p></div>
+<div class="action-row"><a class="button secondary" href="{{ url_for('edit_student',student_id=b.student.id) }}">Edit profile</a><a class="primary button-link" href="{{ url_for('add_semester',student_id=b.student.id) }}">+ Add semester</a></div></div>
+<div class="stat-grid three">
+  <div class="stat"><span>Combined average</span><strong>{{ "%.2f"|format(b.overall_average) }}%</strong></div>
+  <div class="stat"><span>Overall grade</span><strong>{{ b.overall_grade }}</strong></div>
+  <div class="stat"><span>Overall result</span><strong>{{ 'Pass' if b.overall_passed else 'Fail' }}</strong></div>
+</div>
+<div class="action-row report-actions"><a class="primary button-link" href="{{ url_for('student_report_pdf',student_id=b.student.id) }}">Download PDF report</a><a class="button secondary" href="{{ url_for('student_report',student_id=b.student.id) }}">Printable HTML report</a></div>
+{% for r in b.semesters %}
+<section class="panel semester-panel">
+  <div class="panel-heading"><div><h2>Year {{ r.semester.year }} · Semester {{ r.semester.semester }}</h2><p class="muted small">Attendance: {{ r.semester.classes_attended }} of {{ r.semester.total_classes }} classes ({{ "%.2f"|format(r.attendance) }}%)</p></div>
+    <a class="button secondary" href="{{ url_for('edit_semester',student_id=b.student.id,semester_id=r.semester.id) }}">Edit semester</a></div>
+  {% if r.attendance_warning %}<div class="alert error">Attendance warning: below 75%.</div>{% endif %}
+  <div class="stat-grid three">
+    <div class="stat"><span>Total marks</span><strong>{{ "%.2f"|format(r.total_marks) }}</strong></div>
+    <div class="stat"><span>Average</span><strong>{{ "%.2f"|format(r.average) }}%</strong></div>
+    <div class="stat"><span>Performance</span><strong>{{ r.performance }}</strong></div>
+  </div>
+  <div class="table-wrap"><table><thead><tr><th>Subject</th><th>Mark</th><th>Result</th></tr></thead><tbody>
+  {% for m in r.subjects %}<tr><td>{{ m.subject }}</td><td>{{ "%.2f"|format(m.mark) }}</td><td><span class="pill {{ 'good' if m.mark>=40 else 'bad' }}">{{ 'Pass' if m.mark>=40 else 'Fail' }}</span></td></tr>{% endfor %}
+  </tbody></table></div>
+  <div class="summary-line">Grade <strong>{{ r.grade }}</strong><span>·</span> Semester status <strong>{{ 'Pass' if r.passed else 'Fail' }}</strong><span>·</span> Performance <strong>{{ r.performance }}</strong></div>
+</section>
+{% else %}<div class="panel empty">No semester records yet. Add the first semester to begin analysis.</div>{% endfor %}
+<section class="panel"><div class="panel-heading"><h2>Record change history</h2><a class="small-link" href="{{ url_for('audit') }}">View all history</a></div>
+{% if audit %}<div class="table-wrap"><table><thead><tr><th>Date/time</th><th>Action</th><th>Details</th></tr></thead><tbody>{% for a in audit %}<tr><td>{{ a.created_at }}</td><td>{{ a.action }}</td><td class="wrap-cell">{{ a.details }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<p class="muted">No changes recorded yet.</p>{% endif %}</section>
+<form method="post" action="{{ url_for('delete_student',student_id=b.student.id) }}" onsubmit="return confirm('Permanently delete this student and all semester marks? A deletion record will be kept in the change history.');" class="delete-row"><button class="danger" type="submit">Delete student permanently</button></form>
+{% endblock %}

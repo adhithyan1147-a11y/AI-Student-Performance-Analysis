@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Student records{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">RECORD MANAGEMENT</div><h1>Student records</h1><p class="muted">Search students and filter semester results.</p></div><a class="primary button-link" href="{{ url_for('add_student') }}">+ Add student</a></div>
+<form class="filter-panel" method="get">
+  <label>Search<input name="q" value="{{ q }}" placeholder="Name or register number"></label>
+  <label>Department<select name="department"><option value="">All departments</option>{% for d in departments %}<option value="{{ d }}" {% if department==d %}selected{% endif %}>{{ d }}</option>{% endfor %}</select></label>
+  <label>Year or semester<input name="year" value="{{ year }}" placeholder="e.g. 2026 or 1"></label>
+  <label>Grade<select name="grade"><option value="">All grades</option>{% for g in ['O','A+','A','B+','B','F'] %}<option {% if grade==g %}selected{% endif %}>{{ g }}</option>{% endfor %}</select></label>
+  <label>Result<select name="result"><option value="">Pass and fail</option>{% for x in ['Pass','Fail'] %}<option {% if result==x %}selected{% endif %}>{{ x }}</option>{% endfor %}</select></label>
+  <label>Performance<select name="performance"><option value="">All categories</option>{% for x in ['Excellent','Average','Weak'] %}<option {% if performance==x %}selected{% endif %}>{{ x }}</option>{% endfor %}</select></label>
+  <label>Attendance<select name="warning"><option value="">All attendance</option><option value="yes" {% if warning=='yes' %}selected{% endif %}>Warning below 75%</option></select></label>
+  <div class="filter-actions"><button class="primary" type="submit">Apply filters</button><a class="button secondary" href="{{ url_for('students') }}">Clear</a></div>
+</form>
+<section class="panel"><div class="table-wrap"><table><thead><tr><th>Student</th><th>Register no.</th><th>Department</th><th>Year / sem.</th><th>Average</th><th>Grade</th><th>Result</th><th>Category</th><th>Attendance</th><th></th></tr></thead><tbody>
+{% for row in rows %}{% set s=row.student %}{% set r=row.result %}<tr>
+<td><a class="table-link" href="{{ url_for('student_detail',student_id=s.id) }}">{{ s.name }}</a></td><td>{{ s.register_number }}</td><td>{{ s.department }}</td><td>{{ r.semester.year }} / {{ r.semester.semester }}</td>
+<td>{{ "%.2f"|format(r.average) }}%</td><td><span class="grade">{{ r.grade }}</span></td>
+<td><span class="pill {{ 'good' if r.passed else 'bad' }}">{{ 'Pass' if r.passed else 'Fail' }}</span></td>
+<td>{{ r.performance }}</td><td><span class="pill {{ 'bad' if r.attendance_warning else 'good' }}">{{ "%.1f"|format(r.attendance) }}%</span></td>
+<td><a class="small-link" href="{{ url_for('student_detail',student_id=s.id) }}">View</a></td>
+</tr>{% else %}<tr><td colspan="10" class="empty">No matching semester records found.</td></tr>{% endfor %}
+</tbody></table></div></section>
+{% endblock %}

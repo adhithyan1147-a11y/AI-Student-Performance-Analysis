@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Import CSV{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">DATA IMPORT</div><h1>Import students from CSV</h1><p class="muted">The full file is validated before any data is saved. If any row fails validation, the entire import is rejected.</p></div></div>
+<section class="panel">
+  <h2>Upload CSV file</h2>
+  <p>Use one row per subject. Repeat the student's details and semester attendance values for each subject.</p>
+  <p class="small muted">Required headers: name, register_number, department, year, semester, subject, mark, classes_attended, total_classes</p>
+  <p><a class="small-link" href="{{ url_for('static',filename='sample_import.csv') }}">Download sample CSV template</a></p>
+  <form method="post" enctype="multipart/form-data" class="stack"><label>CSV file<input type="file" name="file" accept=".csv,text/csv" required></label><button class="primary" type="submit">Validate and preview CSV</button></form>
+</section>
+{% if errors %}
+<section class="panel"><h2>Import validation errors</h2><div class="alert error">No rows have been imported. Correct the errors and upload the complete file again.</div><ul class="error-list">{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+{% if preview %}<h3>Preview of parsed rows</h3><div class="table-wrap"><table><thead><tr><th>Row</th><th>Register no.</th><th>Student</th><th>Year / sem.</th><th>Subject</th><th>Mark</th></tr></thead><tbody>{% for r in preview %}<tr><td>{{ r.line }}</td><td>{{ r.register_number }}</td><td>{{ r.name }}</td><td>{{ r.year }}/{{ r.semester }}</td><td>{{ r.subject }}</td><td>{{ r.mark_num }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+</section>
+{% endif %}
+{% endblock %}

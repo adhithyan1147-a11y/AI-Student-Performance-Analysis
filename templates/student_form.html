@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{% if mode=='add' %}Add student{% elif mode=='semester' %}Add semester{% else %}Edit semester{% endif %}{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">STUDENT RECORDS</div><h1>{% if mode=='add' %}Add a student{% elif mode=='semester' %}Add semester record{% else %}Edit semester record{% endif %}</h1><p class="muted">Enter details carefully. Marks must be between 0 and 100.</p></div></div>
+<form method="post" class="panel form-panel" id="student-form">
+  {% if mode=='add' %}
+  <div class="form-grid">
+    <label>Student name<input name="name" required value="{{ request.form.get('name','') }}"></label>
+    <label>Register number<input name="register_number" required value="{{ request.form.get('register_number','') }}"></label>
+    <label>Department<input name="department" required value="{{ request.form.get('department','') }}"></label>
+  </div>
+  {% else %}
+  <div class="callout">Student: <strong>{{ student.name }}</strong> · {{ student.register_number }} · {{ student.department }}</div>
+  {% endif %}
+  <div class="form-grid">
+    <label>Academic year<input name="year" required placeholder="e.g. 2026" value="{{ request.form.get('year', semester.year if semester else '') }}"></label>
+    <label>Semester<input name="semester" required placeholder="e.g. 1" value="{{ request.form.get('semester', semester.semester if semester else '') }}"></label>
+    <label>Classes attended<input name="classes_attended" type="number" min="0" required value="{{ request.form.get('classes_attended', semester.classes_attended if semester else 0) }}"></label>
+    <label>Total classes<input name="total_classes" type="number" min="0" required value="{{ request.form.get('total_classes', semester.total_classes if semester else 0) }}"></label>
+  </div>
+  <div class="panel-heading subject-heading"><div><h2>Subject marks</h2><p class="muted small">Add as many subjects as needed.</p></div><button type="button" class="secondary button" id="add-subject">+ Add subject</button></div>
+  <div id="subjects-list">
+    {% if request.method == 'POST' and request.form.getlist('subject[]') %}
+      {% for sub in request.form.getlist('subject[]') %}<div class="subject-row"><label>Subject<input name="subject[]" required value="{{ sub }}"></label><label>Mark (0–100)<input name="mark[]" type="number" min="0" max="100" step="0.01" required value="{{ request.form.getlist('mark[]')[loop.index0] }}"></label><button type="button" class="remove-subject secondary">Remove</button></div>{% endfor %}
+    {% elif marks %}
+      {% for m in marks %}<div class="subject-row"><label>Subject<input name="subject[]" required value="{{ m.subject }}"></label><label>Mark (0–100)<input name="mark[]" type="number" min="0" max="100" step="0.01" required value="{{ m.mark }}"></label><button type="button" class="remove-subject secondary">Remove</button></div>{% endfor %}
+    {% else %}
+      <div class="subject-row"><label>Subject<input name="subject[]" required placeholder="e.g. Python"></label><label>Mark (0–100)<input name="mark[]" type="number" min="0" max="100" step="0.01" required></label><button type="button" class="remove-subject secondary">Remove</button></div>
+    {% endif %}
+  </div>
+  <div class="form-actions"><button class="primary" type="submit">Save record</button><a class="button secondary" href="{{ url_for('student_detail',student_id=student.id) if student else url_for('students') }}">Cancel</a></div>
+</form>
+{% endblock %}

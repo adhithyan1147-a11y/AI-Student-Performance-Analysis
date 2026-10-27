@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Edit student{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">STUDENT RECORDS</div><h1>Edit student details</h1><p class="muted">Changing the register number is allowed only if it is unique.</p></div></div>
+<form method="post" class="panel form-panel stack">
+  <label>Student name<input name="name" required value="{{ request.form.get('name',student.name) }}"></label>
+  <label>Register number<input name="register_number" required value="{{ request.form.get('register_number',student.register_number) }}"></label>
+  <label>Department<input name="department" required value="{{ request.form.get('department',student.department) }}"></label>
+  <div class="form-actions"><button class="primary" type="submit">Save changes</button><a class="button secondary" href="{{ url_for('student_detail',student_id=student.id) }}">Cancel</a></div>
+</form>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">OVERVIEW</div><h1>Dashboard</h1><p class="muted">A quick summary of student performance across recorded semesters.</p></div><a class="primary button-link" href="{{ url_for('add_student') }}">+ Add student</a></div>
+<div class="stat-grid">
+  <div class="stat"><span>Total students</span><strong>{{ total }}</strong></div>
+  <div class="stat"><span>Semester records</span><strong>{{ total_semesters }}</strong></div>
+  <div class="stat"><span>Passed records</span><strong>{{ passed }}</strong></div>
+  <div class="stat"><span>Failed records</span><strong>{{ failed }}</strong></div>
+  <div class="stat"><span>Class average</span><strong>{{ "%.2f"|format(class_average) }}%</strong></div>
+  <div class="stat"><span>Attendance warnings</span><strong>{{ warnings }}</strong></div>
+</div>
+<h2>Performance categories</h2>
+<div class="stat-grid three">
+  <div class="stat category-excellent"><span>Excellent · average ≥ 85%</span><strong>{{ excellent }}</strong></div>
+  <div class="stat category-average"><span>Average · 50%–84.99%</span><strong>{{ average }}</strong></div>
+  <div class="stat category-weak"><span>Weak · average &lt; 50%</span><strong>{{ weak }}</strong></div>
+</div>
+<div class="two-col">
+  <section class="panel"><div class="panel-heading"><h2>Subject-wise performance</h2></div>
+    {% if subject_rows %}<div class="table-wrap"><table><thead><tr><th>Subject</th><th>Average mark</th><th>Entries</th></tr></thead><tbody>
+    {% for r in subject_rows %}<tr><td>{{ r.subject }}</td><td>{{ "%.2f"|format(r.average) }}%</td><td>{{ r.count }}</td></tr>{% endfor %}
+    </tbody></table></div>{% else %}<p class="muted">No marks recorded yet.</p>{% endif %}
+  </section>
+  <section class="panel"><div class="panel-heading"><h2>Grade distribution</h2></div>
+    <div class="table-wrap"><table><thead><tr><th>Grade</th><th>Semester records</th></tr></thead><tbody>
+    {% for grade, count in grade_counts.items() %}<tr><td><span class="grade">{{ grade }}</span></td><td>{{ count }}</td></tr>{% endfor %}
+    </tbody></table></div>
+    <p class="small muted">Statistics are calculated from semester records with subject marks.</p>
+  </section>
+</div>
+<div class="callout"><strong>Rule summary:</strong> Subject pass mark 40/100 · Attendance warning below 75% · Performance category uses semester average.</div>
+{% endblock %}

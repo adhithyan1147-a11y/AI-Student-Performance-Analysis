@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Administrator login{% endblock %}
+{% block content %}
+<section class="login-card">
+  <div class="eyebrow">ADMINISTRATOR PORTAL</div>
+  <h1>Welcome back</h1>
+  <p class="muted">Sign in to manage student records and performance.</p>
+  <form method="post" class="stack">
+    <label>Username<input name="username" required autocomplete="username"></label>
+    <label>Password<input type="password" name="password" required autocomplete="current-password"></label>
+    <button class="primary full" type="submit">Sign in</button>
+  </form>
+  <p class="small muted">Local demonstration project · Rule-based analysis, not machine learning.</p>
+</section>
+{% endblock %}

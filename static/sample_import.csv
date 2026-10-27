@@ -1,0 +1,3 @@
+name,register_number,department,year,semester,subject,mark,classes_attended,total_classes
+Demo Student,DEMO2026001,AI & Data Science,2026,1,Python,88,42,48
+Demo Student,DEMO2026001,AI & Data Science,2026,1,Mathematics,81,42,48

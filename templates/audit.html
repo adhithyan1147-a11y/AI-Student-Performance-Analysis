@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Change history{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">AUDIT TRAIL</div><h1>Change history</h1><p class="muted">Recent edits, imports, additions, and deletions.</p></div></div>
+<section class="panel"><div class="table-wrap"><table><thead><tr><th>Date/time</th><th>Register number</th><th>Action</th><th>Details</th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.created_at }}</td><td>{{ r.register_number }}</td><td>{{ r.action }}</td><td class="wrap-cell">{{ r.details }}</td></tr>{% else %}<tr><td colspan="4" class="empty">No change history yet.</td></tr>{% endfor %}
+</tbody></table></div></section>
+{% endblock %}

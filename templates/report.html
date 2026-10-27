@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Performance report — {{ b.student.name }}{% endblock %}
+{% block content %}
+<div class="page-heading no-print"><div><div class="eyebrow">REPORT</div><h1>Student performance report</h1><p class="muted">Printable report for {{ b.student.name }}.</p></div><div class="action-row"><button class="primary" onclick="window.print()">Print / Save PDF</button><a class="button secondary" href="{{ url_for('student_report_pdf',student_id=b.student.id) }}">Download PDF</a></div></div>
+<section class="panel report-paper">
+  <div class="report-title"><div class="eyebrow">STUDENT PERFORMANCE ANALYSIS</div><h1>Performance Report</h1><p>Generated: {{ now if now is defined else "" }}</p></div>
+  <div class="form-grid report-meta"><div><span class="muted small">Student name</span><strong>{{ b.student.name }}</strong></div><div><span class="muted small">Register number</span><strong>{{ b.student.register_number }}</strong></div><div><span class="muted small">Department</span><strong>{{ b.student.department }}</strong></div></div>
+  <h2>Combined performance</h2><div class="stat-grid three"><div class="stat"><span>Average</span><strong>{{ "%.2f"|format(b.overall_average) }}%</strong></div><div class="stat"><span>Grade</span><strong>{{ b.overall_grade }}</strong></div><div class="stat"><span>Result</span><strong>{{ 'Pass' if b.overall_passed else 'Fail' }}</strong></div></div>
+  {% for r in b.semesters %}<h2>Year {{ r.semester.year }} · Semester {{ r.semester.semester }}</h2>
+  <div class="table-wrap"><table><thead><tr><th>Subject</th><th>Mark / 100</th></tr></thead><tbody>{% for m in r.subjects %}<tr><td>{{ m.subject }}</td><td>{{ "%.2f"|format(m.mark) }}</td></tr>{% endfor %}</tbody></table></div>
+  <div class="report-summary"><span>Total: <strong>{{ "%.2f"|format(r.total_marks) }}</strong></span><span>Average: <strong>{{ "%.2f"|format(r.average) }}%</strong></span><span>Grade: <strong>{{ r.grade }}</strong></span><span>Result: <strong>{{ 'Pass' if r.passed else 'Fail' }}</strong></span><span>Category: <strong>{{ r.performance }}</strong></span><span>Attendance: <strong>{{ "%.2f"|format(r.attendance) }}%</strong></span></div>
+  {% if r.attendance_warning %}<p class="warning-text">Attendance warning: below 75%.</p>{% endif %}{% endfor %}
+  <p class="small muted">Rules: each subject must be at least 40/100 to pass; attendance warning below 75%; Excellent ≥85%, Average ≥50% and &lt;85%, Weak &lt;50%.</p>
+</section>
+{% endblock %}
